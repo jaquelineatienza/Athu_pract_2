@@ -15,6 +15,7 @@ export default (req, res, next) => {
   }
 
   const decoded = jwt.verify(token, SECRET_KEY);
+  console.log(decoded);
 
   // Se busca al usuario en la base de datos
   const user = database.user.find((user) => user.id === decoded.userId);
