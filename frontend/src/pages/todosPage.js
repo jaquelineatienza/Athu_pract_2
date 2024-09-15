@@ -327,8 +327,7 @@ export const todosPage = () => {
     "mt-2"
   );
   modalCloseButton.addEventListener("click", closeModal);
-
-  // Añadir el evento al botón de actualizar en el formulario
+//evento para actualizar
   mdForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const titulo = titleInput.value;
@@ -342,7 +341,7 @@ export const todosPage = () => {
 
     try {
       const update = await fetch(
-        `http://localhost:4000/todos/update/${todosID}`, // Corregir la URL de la solicitud
+        `http://localhost:4000/todos/update/${todosID}`, 
         {
           method: "POST",
           credentials: "include",
@@ -366,7 +365,6 @@ export const todosPage = () => {
   });
 
   const updateTable = () => {
-    // Limpiar el cuerpo de la tabla
     tbody.innerHTML = "";
 
     // Obtener los todos actualizados
@@ -376,9 +374,7 @@ export const todosPage = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Recorrer la lista de "todos" y crear filas en la tabla
         data.todos.forEach((todo) => {
-          // if (todo.id > 10) return; // Solo mostrar los "todos" con ID menor o igual a 10
 
           const tr = document.createElement("tr");
 
@@ -411,7 +407,6 @@ export const todosPage = () => {
             "rounded",
             "hover:bg-red-600"
           );
-          // Crear un botón "Actualizar" por cada fila
           const btnActualizar = document.createElement("button");
           btnActualizar.classList.add(
             "bg-green-500",
@@ -443,31 +438,23 @@ export const todosPage = () => {
               }
             }
           });
-
-          // Añadir evento al botón para abrir el modal con los datos del "todo"
           btnActualizar.addEventListener("click", () => {
             openModal(todo);
           });
-
-          // Añadir el botón a la celda de acciones
           td5.appendChild(btnActualizar);
           td5.appendChild(btnEliminar);
 
-          // Añadir las celdas a la fila
           tr.appendChild(td1);
           tr.appendChild(td2);
           tr.appendChild(td3);
           tr.appendChild(td4);
           tr.appendChild(td5);
 
-          // Añadir la fila al cuerpo de la tabla
           tbody.appendChild(tr);
         });
       });
   };
 
-  // Devolver el contenedor completo
   updateTable();
-
   return container;
 };
