@@ -423,6 +423,27 @@ export const todosPage = () => {
           btnActualizar.textContent = "Actualizar";
           btnEliminar.textContent = "Eliminar";
 
+          //evento de eliminar
+          btnEliminar.addEventListener("click", async () => {
+            if (confirm("¿Está seguro de eliminar este todo?")) {
+              try {
+                const deleteTodo = await fetch(
+                  `http://localhost:4000/todos/delete/${todo.id}`,
+                  {
+                    method: "DELETE",
+                    credentials: "include",
+                  }
+                );
+                if (deleteTodo.ok) {
+                  alert("El todo ha sido eliminado correctamente");
+                  updateTable();
+                }
+              } catch (error) {
+                console.error("Error al eliminar el todo:", error);
+              }
+            }
+          });
+
           // Añadir evento al botón para abrir el modal con los datos del "todo"
           btnActualizar.addEventListener("click", () => {
             openModal(todo);
