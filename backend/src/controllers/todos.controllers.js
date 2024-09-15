@@ -50,6 +50,13 @@ export const editTodos = (req, res) => {
     return res.status(404).json({ message: "Todo no encontrado" });
   }
 
+  // Verificar que el usuario sea el dueño del todo
+  const userTodos = database.todos.filter((todo) => todo.owner === req.user.id);
+  if (!userTodos) {
+    return res
+      .status(403)
+      .json({ message: "No tienes permisos para editar este todo" });
+  }
   // Actualizar los campos
   if (title) {
     todo.title = title; // Actualizar el título si se proporciona
@@ -74,12 +81,12 @@ export const deleteTodo = (req, res) => {
     return res.status(404).json({ message: "Todo no encontrado" });
   }
 
-  // // Verificar que el usuario sea el dueño del todo
-  // if (database.todos[todoIndex].owner !== req.user.id) {
-  //   return res
-  //     .status(403)
-  //     .json({ message: "No tienes permiso para eliminar este todo" });
-  // }
+  // Verificar que el usuario sea el dueño del todo
+  if (database.todos[todoIndex].owner !== req.user.id) {
+    return res
+      .status(403)
+      .json({ message: "No tienes permiso para eliminar este todo" });
+  }
 
   const deletedTodo = database.todos.splice(todoIndex, 1);
 

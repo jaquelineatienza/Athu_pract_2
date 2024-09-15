@@ -97,9 +97,32 @@ export const todosPage = () => {
   );
 
   //peticion para crear un todo
-  $formCreate.addEventListener("submit", (e) => {
+  $formCreate.addEventListener("submit", async (e) => {
     e.preventDefault();
-    console.log("hola");
+    const title = creaTitle.value;
+    const isComplete = formComplete.checked;
+    console.log(title, isComplete);
+    if (!title) {
+      alert("ingrese un titulo");
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:4000/todos/create", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: title, completed: isComplete }),
+      });
+      if (response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      updateTable();
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   // Crear el botón "Home"
@@ -191,7 +214,6 @@ export const todosPage = () => {
   modalBackground.classList.add(
     "fixed",
     "bg-gray-900",
-    "bg-opacity-50",
     "hidden",
     "z-50",
     "mt-50",
@@ -282,12 +304,14 @@ export const todosPage = () => {
     todosID = todo.id; // Asignar el ID a la variable todosID
     modalBackground.classList.remove("hidden");
     modalContent.classList.remove("hidden");
+    formContainer.style.display = "none";
   };
 
   // Función para cerrar el modal
   const closeModal = () => {
     modalBackground.classList.add("hidden");
     modalContent.classList.add("hidden");
+    formContainer.style.display = "flex";
   };
 
   // Añadir evento para cerrar el modal al botón de cerrar
@@ -334,6 +358,7 @@ export const todosPage = () => {
       if (update.ok) {
         alert("El todo ha sido actualizado correctamente");
         updateTable();
+        closeModal();
       }
     } catch (error) {
       console.error("Error al actualizar el todo:", error);
@@ -353,7 +378,7 @@ export const todosPage = () => {
       .then((data) => {
         // Recorrer la lista de "todos" y crear filas en la tabla
         data.todos.forEach((todo) => {
-          if (todo.id > 10) return; // Solo mostrar los "todos" con ID menor o igual a 10
+          // if (todo.id > 10) return; // Solo mostrar los "todos" con ID menor o igual a 10
 
           const tr = document.createElement("tr");
 
@@ -376,7 +401,16 @@ export const todosPage = () => {
 
           const td5 = document.createElement("td");
           td5.classList.add("border", "px-4", "py-2");
-
+          const btnEliminar = document.createElement("button");
+          btnEliminar.classList.add(
+            "bg-red-500",
+            "text-white",
+            "p-2",
+            "px-4",
+            "mt-2",
+            "rounded",
+            "hover:bg-red-600"
+          );
           // Crear un botón "Actualizar" por cada fila
           const btnActualizar = document.createElement("button");
           btnActualizar.classList.add(
@@ -387,6 +421,7 @@ export const todosPage = () => {
             "hover:bg-green-600"
           );
           btnActualizar.textContent = "Actualizar";
+          btnEliminar.textContent = "Eliminar";
 
           // Añadir evento al botón para abrir el modal con los datos del "todo"
           btnActualizar.addEventListener("click", () => {
@@ -395,6 +430,7 @@ export const todosPage = () => {
 
           // Añadir el botón a la celda de acciones
           td5.appendChild(btnActualizar);
+          td5.appendChild(btnEliminar);
 
           // Añadir las celdas a la fila
           tr.appendChild(td1);
