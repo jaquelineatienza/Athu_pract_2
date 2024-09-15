@@ -40,20 +40,15 @@ export const createTodos = (req, res) => {
 };
 
 export const editTodos = (req, res) => {
-  const { id } = req.params; // El ID del todo que se va a editar
+  const { todosID } = req.params; // El ID del todo que se va a editar
   const { title, completed } = req.body; // Los nuevos datos enviados por el cliente
 
   // Buscar el todo por su ID
-  const todo = database.todos.find((todo) => todo.id === parseInt(id));
+  const todo = database.todos.find((todo) => todo.id === parseInt(todosID));
 
   if (!todo) {
     return res.status(404).json({ message: "Todo no encontrado" });
   }
-
-  // // Verificar que el usuario sea el dueño del todo
-  // if (todo.owner !== req.user.id) {
-  //   return res.status(403).json({ message: "No tienes permiso para editar este todo" });
-  // }
 
   // Actualizar los campos
   if (title) {
